@@ -26,10 +26,10 @@ Three control strategies are addressed: PWM, SPWM and SVM.
 ![SVM](https://i.gyazo.com/d7d61b1c6d23e9b61d9a06dd2b90f326.png)
 
 ## Installation
-Install [Node.js](https://nodejs.org/en/)
+Download file
 ```
-git clone https://github.com/PZenha/LAMEC_IoT
+git clone https://github.com/AMak77/Simulator
 ```
-Open folder "LAMEC_IoT"
+Open folder "Simulator-master"
 ```
 Open the file "index.html" via browser (the menu of application will appear)
