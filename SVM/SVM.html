@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>SVM</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+		<script src="../Ficheiros Locais/JQuery1.12.4.js">
+		</script>
+		
+		<script src="../Ficheiros Locais/spectrum.js">
+		</script>
+		
+		<link rel="stylesheet" href="../Ficheiros Locais/spectrum.css" >
+		
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">
+		</script>
+		
+		<link rel="stylesheet" type="text/css" href="../Ficheiros Locais/Style.css">
+		
+	</head>
+	<body onload="init()"> 
+		<canvas id="xy-graph" width="835" height="300" style="width:43.5vw; height:32vh;position:absolute; background-color:white;  top:22.14vh; left:50vw;">
+  		CANVAS NOT SUPPORTED IN THIS BROWSER!
+ 		</canvas>
+		<canvas id="xy1-graph" width="835" height="150" style="width:43.5vw; height:16vh;position:absolute; background-color:white; top:61.4814vh; left:50vw;" >
+  		CANVAS NOT SUPPORTED IN THIS BROWSER!
+ 		</canvas>
+		<canvas id="xy2-graph" width="835" height="150" style="width:43.5vw; height:16vh;position:absolute; background-color:white; top:81.8224vh; left:50vw;" >
+		CANVAS NOT SUPPORTED IN THIS BROWSER!
+		</canvas>
+		<canvas id="xy3-graph" width="835" height="300" style="width:43.5vw; height:32vh;position:absolute; background-color:white; top:104.849vh; left:50vw;" >
+		CANVAS NOT SUPPORTED IN THIS BROWSER!
+		</canvas>
+		<canvas id="xy4-graph" width="835" height="300" style="width:43.5vw; height:32vh;position:absolute; background-color:white; top:144.18vh; left:50vw;" >
+		CANVAS NOT SUPPORTED IN THIS BROWSER!
+		</canvas>
+
+		<!--Título-->
+		<header class="Intro">
+			<h1 style="position:absolute; top:1vmin; left:27%; font-family:Arial Narrow, sans-serif;font-size:1.9vw;"><b>Conversores CC/CA - Controlo por <i>Space Vector Modulation</i></b></h1>
+			<h2 style="position:absolute; top:6vmin; left:43%;font-family:Arial Narrow, sans-serif;font-size:1.2vw;">Controlo SVM Monofásico (Resultados Teóricos)</h2>
+		</header>
+		
+		<!--Menu-->
+	
+		<ul class="nav nav-pills"  style="font-family:Noto Sans, sans-serif;position:absolute; left:2.5252vw; height:4vh; background-color:white; border-radius:5px; font-weight:bold; font-size:0.75vw">
+		
+			<li ><a style="height:4vh;color:black" href="../Index.html" >&#8592;</a></li>
+		
+			<li>
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#" style="height:4vh;color:black;">Sliders</a>
+				<ul class="dropdown-menu" style="height:3.85vh;background-color:white">
+				<li><a data-toggle="modal" data-target="#myModal5"  data-backdrop="static"  data-keyboard="false" onclick="avalia_ondas()" style="font-size:0.7vw;color:black;cursor:pointer;">Máximos & Mínimos</a></li>   		
+				</ul>
+			</li>
+			
+			<li>
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#" style="height:4vh;color:black">Gráficos</a>
+				<ul class="dropdown-menu" style="height:6.5vh;background-color:white;cursor:pointer">
+				<li><a data-toggle="modal" data-target="#myModal"  data-backdrop="static"  data-keyboard="false" onclick="avalia_ondas()" style="font-size:0.7vw;color:black">Variáveis</a></li>   
+				<li><a data-toggle="modal" data-target="#myModal2"  data-backdrop="static"  data-keyboard="false" onclick="Ondas_Visualizadas()" style="font-size:0.7vw;color:black;" >Cores</a></li>  	
+				</ul>
+			</li>
+			
+			<li>
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#" style="height:4vh;color:black;">Calcular</a>
+				<ul class="dropdown-menu" style="height:9vh;background-color:white;cursor:pointer;">
+				<li><a onclick="Alerta_Vo_Max()" style="font-size:0.7vw;color:black" >Máximo da Tensão na Carga </a></li>
+				<li><a onclick="Alerta_Io_Max()" style="font-size:0.7vw;color:black" >Máximo da Corrente na Carga </a></li> 
+				<li><a onclick="Alerta_Io_rms()" style="font-size:0.7vw;color:black" >Valor Eficaz da Corrente na Carga </a></li>   			
+				</ul>
+			</li>
+			<li><a data-toggle="modal" data-target="#myModal3"  data-backdrop="static"  data-keyboard="false" style="height:4vh;color:black;cursor:pointer; font-size:0.8vw; font-weight:normal">&#9432;</a></li>
+		</ul>
+	
+
+		<!--Introdução : Montagem & Gráfico-->
+				<!-- <img src="../Imagens/PowerElectronics-000.png" alt="Circuito" height="300" width="500" id="trocarimagem"> -->
+				<h5 style="font-family: Arial Narrow, sans-serif; font-size:1vw;position:absolute; top:17.8vh; left:67.05vw;"><b>Gráfico Tensões (Predefinido)</b></h5>
+				<h5 style="font-family:Arial Narrow, sans-serif; font-size:1vw;position:absolute; top:57.15vh; left:64.05vw;"><b>Gráfico Tensões de Controlo (Predefinido)</b></h5>
+				<h5 style="font-family:Arial Narrow, sans-serif; font-size:1vw;position:absolute; top:100.5vh; left:64.05vw;"><b>Gráfico Tensões de Saída (Predefinido)</b></h5>
+				<h5 style="font-family:Arial Narrow, sans-serif; font-size:1vw;position:absolute; top:139.5vh; left:64.05vw;"><b>Gráfico Corrente de Saída (Predefinido)</b></h5>
+				<h5 style="  font-family: Arial Narrow, sans-serif; font-size:0.8vw;position:absolute; top:18vh; left:6.05vw;"><b>Esquema:</b></h5>
+	
+				<script src="inter_html.js"></script> 
+				<div class="Rangeslider" align="center" >
+				<!--SLIDERS PORTADORA-->
+				<div id="Titulo1">
+					<h3 style="position:relative;color:white;font-size:0.8vw;top:0.2vh;"><b>SLIDERS PORTADORA</b></h3>
+				</div>
+				<br>
+				<!--Slider Vpico-->
+				<label for="tensao_pico" style="font-size:0.6vw">Valor da Tensão de Pico:</label>
+				<input name="tensao2s" id="tensao_pico" min="0" max="1" value="1" step="0.01" type="range" oninput="atualiza_vpicopor(value);Draw()" onchange="Draw()"/>
+				<output for="tensao2s" id="outvpicop" style="font-size:0.8vw">1 V</output>
+		
+				
+				<!--Slider Frequência-->
+				<label for="freq1" style="font-size:0.6vw">Valor da frequência (f):</label>
+				<input name="freqs" id="freq1" min="0" max="110" value="50" step="1" type="range" oninput="atualiza_freqpor(value);Draw()" onchange="Draw()"/>
+				<output for="freqs" id="outfreq" style="font-size:0.8vw">50 Hz</output>
+				
+				</div>
+				<div class="Rangeslider2" align="center" >
+				<!--SLIDER CIRCUITO -->
+				<div id="Titulo1">
+				<h3 style="position:relative;color:white;font-size:0.8vw;top:0.2vh;"><b>SLIDERS CIRCUITO</b></h3>
+				</div>
+				<!--Tensão de Entrada-->
+				<label for="tensao_id" style="font-size:0.6vw">Valor da Tensão de Entrada (Vin):</label>
+				<input name="tensaos" id="tensao_id" min="0" max="200" value="100" step="1" type="range" oninput="atualiza_vin(value);Draw()" onchange="Draw()"/>
+				<output for="tensaos" id="outvin" style="font-size:0.8vw">100 V</output>
+
+				<!-- Slider Resistencia-->
+				<label for="Res_id" style="font-size:0.6vw">Resistência da Carga:</label>
+				<input name="Resid" id="Res_id" min="1" max="20" value="10" step="0.1" type="range" oninput="atualiza_Res(value);Draw()" onchange="Draw()"/>
+				<output for="Resid" id="outres" style="font-size:0.8vw">10 &Omega;</output>
+			
+				
+				<!--Siliders Indutancia Carga -->
+				<label for="Ind_id" style="font-size:0.6vw">Indutância:</label>
+				<input name="Ind" id="Ind_id" min="0" max="10" value="5" step="0.1" type="range" oninput="atualiza_L(value);Draw()" onchange="Draw()"/>
+				<output for="Ind" id="outind" style="font-size:0.8vw">5 mH</output>
+
+				</div>
+			
+		<div class="Observacao1" id="Obs" align="center" data-role="Observacao" data-mini="true">
+				<h4 style="color:white;font-size:1vw"><center><u>OBSERVAÇÕES</u></center></h4>
+				<h5 style="color:white;font-size:0.8vw"><b>Vo<sub>RMS</sub>:<span id="outrms"></span></b></h5>			
+		</div>
+		
+		<img src="../Imagens/potenciapwm.png" alt="Montagem OQPC" id="montagem_oqpc" style="position:absolute; top:23.68vh; left:8.90vw; height:31vh; width:25vw;  border-width: 1px; border-style: dotted; border-color: white" >
+				<br>
+				<input style="position:absolute;top:18.68vh;left:10vw;" type="button" value="Controlo" onclick="alterar_imagem(value)"/>
+				<input style="position:absolute;top:18.68vh;left:15vw;" type="button" value="Potência" onclick="alterar_imagem(value)"/>
+				<input style="position:absolute;top:18.68vh;left:20vw;" type="button" value="Completo" data-toggle="modal" data-target="#myModal6"  data-backdrop="static"  data-keyboard="false"/>
+				<br>
+		
+		<h4 style="position:absolute; top:54.5vh; left:81vw;font-size:0.6vw">Legenda</h4>
+		<h4 style="position:absolute; top:54.5vh; left:83.5vw;font-size:0.6vw;">:</h4>
+		<svg id="rect_leg1" width="105" height="22" style="width:6.25vw; height:2.31vh; position:absolute; top:55vh; left:84vw; background-color:white;">
+		</svg>
+		
+		<div id="legenda_1">
+			<h5 id="Leg1_U" style="position:absolute; top:54.55vh;left:88.15vw;font-size:0.6vw;">U</h5>
+			<h5 id="Leg1_W" style="position:absolute; top:54.55vh;left:88.15vw;font-size:0.6vw;">W</h5>
+			<h5 id="Leg1_V" style="position:absolute; top:54.55vh; left:88.15vw;font-size:0.6vw;">V</h5>
+			<h5 id="Leg1_Vpor1" style="position:absolute; top:54.55vh;left:84.20vw;font-size:0.6vw;"> Vpor</h5>
+			<h5 id="Leg1_mod1" style="position:absolute; top:54.55vh; left:86.17vw;font-size:0.6vw;">Vm1</h5>
+			<h5 id="Leg1_mod2" style="position:absolute; top:54.55vh; left:88.15vw;font-size:0.6vw;">Vm2</h5>
+
+		</div>
+		
+		<h4 style="position:absolute; top:77.5vh; left:81vw;font-size:0.6vw;">Legenda</h4>
+		<h4 style="position:absolute; top:77.5vh; left:83.5vw;font-size:0.6vw;">:</h4>
+		<svg id="rect_leg2" width="35" height="22" style="width:2.7vw; height:2.31vh; position:absolute; top:78vh; left:84vw;  background-color:white;">
+		</svg>
+		
+		<div id="legenda_2">
+			<h5 id="Leg2_Vcon1" style="position:absolute; top:77.55vh; left:84.20vw;font-size:0.6vw">Vcon1</h5>
+		</div>
+		
+		<h4 style="position:absolute; top:98vh; left:81vw;font-size:0.6vw;">Legenda</h4>
+		<h4 style="position:absolute; top:98vh; left:83.5vw;font-size:0.6vw;">:</h4>
+		<svg id="rect_leg3" width="35" height="22" style="width:2.7vw; height:2.31vh; position:absolute; top:98.5vh; left:84vw;  background-color:white;">
+		</svg>
+		
+		<div id="legenda_3">
+			<h5 id="Leg3_Vcon2" style="position:absolute; top:98.05vh; left:84.20vw;font-size:0.6vw">Vcon2</h5>
+		</div>
+		
+		<h4 style="position:absolute; top:137.5vh; left:81vw;font-size:0.6vw;">Legenda</h4>
+		<h4 style="position:absolute; top:137.5vh; left:83.5vw;font-size:0.6vw;">:</h4>
+		<svg id="rect_leg4" width="35" height="22" style="width:1.5vw; height:2.31vh; position:absolute; top:138vh; left:84vw;  background-color:white;">
+		</svg>
+		
+		<div id="legenda_4">
+			<h5 id="Leg4_Vo" style="position:absolute; top:137.55vh; left:84.20vw;font-size:0.6vw">Vo</h5>
+		</div>
+
+		<h4 style="position:absolute; top:176.5vh; left:81vw;font-size:0.6vw;">Legenda</h4>
+		<h4 style="position:absolute; top:176.5vh; left:83.5vw;font-size:0.6vw;">:</h4>
+		<svg id="rect_leg5" width="35" height="22" style="width:1.5vw; height:2.31vh; position:absolute; top:177vh; left:84vw;  background-color:white;">
+		</svg>
+		
+		<div id="legenda_5">
+			<h5 id="Leg5_Io" style="position:absolute; top:176.55vh; left:84.20vw;font-size:0.6vw">Io</h5>
+		</div>
+
+
+		<!-- Modals -->
+		
+		<div class="container" >
+			
+								<!-- Modal 1-->
+			<div class="modal fade" id="myModal" role="dialog">
+				<div class="modal-dialog">
+    
+					<!-- Conteúdo-->
+					<div class="modal-content" style="height:20vh;width:40vw;">
+					
+						<div class="modal-header" style="background-color:silver; border-bottom-style:dotted; border-bottom-color:black; border-width:2;">
+							<button type="button" class="close" style=" background-color:silver; color: black; opacity: 1; width:20;border-style:dotted; border-color:black; border-width:1.3;" data-dismiss="modal">&times;</button>
+							<h4 align="center" class="modal-title" style="color:black; font-size:1vw;font-family: Impact, Charcoal, sans-serif;letter-spacing: 0.5px;" ><u>Configuração da Representação dos Gráficos</u></h4>
+						</div>
+						
+						<div class="modal-body" style="font-family: Arial, Helvetica, sans-serif;font-size:0.9vw;background-color:#FFFFFF;">
+			
+							<h5 style="font-size:0.75vw;"><b>Escolha a que gráfico irá querer que as definições se apliquem:</b></h5>
+							
+							<label class="radio-inline">
+							<input type="radio" id="Gra1_Leg" onchange="avalia_ondas();" name="Esc_Grafico" value="Gra1"> Gráfico nº1<br>
+							</label>
+							<label class="radio-inline">
+							<input type="radio" id="Gra2_Leg"  onchange ="avalia_ondas();" name="Esc_Grafico" value="Gra2"> Gráfico nº2<br>
+							</label>
+							<label class="radio-inline">
+							<input type="radio" id="Gra3_Leg"  onchange ="avalia_ondas()" name="Esc_Grafico" value="Gra3"> Gráfico nº3<br>
+							</label>
+							<label class="radio-inline">
+							<input type="radio" id="Gra4_Leg"  onchange ="avalia_ondas()" name="Esc_Grafico" value="Gra4"> Gráfico nº4<br>
+							</label>
+							<label class="radio-inline">
+							<input type="radio" id="Gra5_Leg"  onchange ="avalia_ondas()" name="Esc_Grafico" value="Gra5"> Gráfico nº5<br>
+							</label>
+							<br>
+		
+							<div id="Ondas_1" style="font-family: Arial, Helvetica, sans-serif;font-size:0.8vw;display:none">
+								<h5 style="font-size:0.8vw;"><b>Escolha as Ondas a Representar (Max:3):</b></h5>
+								<input type="checkbox" name="U" id="U_onda" value="U"> &nbsp;Tensão U<br>
+								<input type="checkbox" name="V" id="V_onda" value="V"> &nbsp;Tensão V<br>
+								<input type="checkbox" name="W" id="W_onda" value="W"> &nbsp;Tensão W<br>
+								<input type="checkbox" name="Vpor1" id="Vpor1_onda" value="Vpor1"> &nbsp;Tensão Portadora<br>
+								<input type="checkbox" name="Vmod1" id="Vmod1_onda" value="Vmod1"> &nbsp;Sinal Modulador 1<br>
+								<input type="checkbox" name="Vmod2" id="Vmod2_onda" value="Vmod2"> &nbsp;Sinal Modulador 2<br>
+							</div>
+							
+							<div id="Ondas_2" style="font-size:0.9vw;display:none">
+								<h5 style="font-size:0.9vw;"><b>Escolha as Ondas a Representar:</b></h5>
+								<input type="checkbox" name="Vcon1" id="Vcon1_onda" value="Vcon1"> &nbsp;Tensão Controlo 1<br>
+							</div>
+							
+							<div id="Ondas_3" style="font-size:0.9vw;display:none">
+								<h5 style="font-size:0.9vw;"><b>Escolha as Ondas a Representar:</b></h5>
+								<input type="checkbox" name="Vcon2" id="Vcon2_onda" value="Vcon2"> &nbsp;Tensão Controlo 2<br>
+							</div>
+
+							<div id="Ondas_4" style="font-size:0.9vw;display:none">
+								<h5 style="font-size:0.9vw;"><b>Escolha as Ondas a Representar:</b></h5>
+								<input type="checkbox" name="Vo" id="Vo_onda" value="Vo"> &nbsp;Tensão de Saída na Carga<br>
+							</div>
+
+							<div id="Ondas_5" style="font-size:0.9vw;display:none">
+								<h5 style="font-size:0.9vw;"><b>Escolha as Ondas a Representar:</b></h5>
+								<input type="checkbox" name="Io" id="Io_onda" value="Io"> &nbsp;Corrente de Saída na Carga<br>
+							</div>
+			
+						<!--data-dismiss="modal"-->
+						</div>
+						
+						<div class="modal-footer" style="height:6.5vh; background-color:#FFFFFF; border-top-style:dotted; border-top-color:black; border-width:2;" >
+							<button type="button" class="btn btn-default" onclick="alterar_visual();Draw();" style="font-size: 0.85vw;background-color: red; border-style:solid; border-color:black; border-width:2; color: white; font-family: Impact, Charcoal, sans-serif;letter-spacing: 0.5px;"> <u>Alterar</u></button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			
+								<!-- Modal 4-->
+			<div class="modal fade" id="myModal2" role="dialog">
+				<div class="modal-dialog">
+    
+					<!-- Conteúdo-->
+					<div class="modal-content" style="height:20vh;width:1000px">
+					
+						<div class="modal-header" style="background-color:silver; border-bottom-style:dotted; border-bottom-color:black; border-width:2;">
+							<button type="button" class="close" style=" background-color:silver; color: black; opacity: 1; width:20;border-style:dotted; border-color:black; border-width:1.3;" data-dismiss="modal">&times;</button>
+							<h4 align="center" class="modal-title" style="font-size:1vw;color:black; font-family: Impact, Charcoal, sans-serif;letter-spacing: 0.5px;" ><u>Configuração da Cor das Ondas Representadas</u></h4>
+						</div>
+						
+						<div class="modal-body" id="Body_Cores" style="height:220px; background-color:white;">
+								<h5 style="font-size:0.9vw;display:inline; position:absolute; top:5px; left:120px;"><b>Gráfico 1</b></h5>
+								<h5 style="font-size:0.9vw;display:inline; position:absolute; top:5px; left:350px;"><b>Gráfico 2</b></h5>
+								<h5 style="font-size:0.9vw;display:inline; position:absolute; top:5px; left:580px;"><b>Gráfico 3</b></h5>
+								<h5 style="font-size:0.9vw;display:inline; position:absolute; top:5px; left:810px;"><b>Gráfico 4</b></h5>
+								
+							<div id="legenda_U">
+								<!--Legenda para Tensão de Entrada -->
+								<div id="mudacor_u" style ="position:absolute; top:40px; left:30px;">
+									<input type='text' onchange="muda_cor('#cor_u','out_cor_u');Draw();" id="cor_u">
+									<output for="cor_u" id="out_cor_u" onchange="Draw()" style="display:none"></output>
+								</div>
+								<h5 id="texto_leg_u" style = " font-size:0.9vw; position:absolute; top:40px; left:90px;"> Tens&atilde;o U</h5>
+							</div>
+
+							<div id ="legenda_W" >
+			
+								<!--Legenda para Tensão de Entrada Sinusoidal -->
+								<div id="mudacor_w" style = "position:absolute; top:80px; left:30px;">
+									<input type='text' onchange="muda_cor('#cor_w','out_cor_w');Draw()" id="cor_w">
+									<output for="cor_w" id="out_cor_w" onchange="Draw()" style="display:none;"></output>
+								</div>
+								<h5 id="texto_leg_w" style = " font-size:0.9vw; position:absolute; top:80px; left:90px;"> Tens&atilde;o W</h5>
+							</div>
+				
+							<div id="legenda_V">
+			
+								<!--Legenda Para Tensão de Saída) -->
+								<div id="mudacor_v" style = "position:absolute; top:120px; left:30px">
+									<input type='text' id="cor_v" onchange="muda_cor('#cor_v','out_cor_v');Draw()">
+									<output for="cor_v" id="out_cor_v" onchange="Draw()" style="display:none"></output>
+								</div>
+								<h5 id="texto_leg_vv" style="font-size:0.9vw; position:absolute; top:120px; left:90px;"> Tens&atilde;o V</h5>
+							</div>
+
+							<div id="legenda_Vpor1">
+								<div id="mudacor_vpor1" style = "position:absolute; top:40px; left:30px">
+									<input type='text' id="cor_vpor1" onchange="muda_cor('#cor_vpor1','out_cor_vpor1');Draw()">
+									<output for="cor_vpor1" id="out_cor_vpor1" onchange="Draw()" style="display:none"></output>
+								</div>
+								<h5 id="texto_leg_vpor1" style="font-size:0.9vw; position:absolute; top:40px; left:90px;"> Tens&atilde;o Vpor1</h5>
+							</div>
+
+							<div id="legenda_mod1">
+								<div id="mudacor_mod1" style = "position:absolute; top:80px; left:30px">
+									<input type='text' id="cor_mod1" onchange="muda_cor('#cor_mod1','out_cor_mod1');Draw()">
+									<output for="cor_mod1" id="out_cor_mod1" onchange="Draw()" style="display:none"></output>
+								</div>
+								<h5 id="texto_leg_mod1" style="font-size:0.9vw; position:absolute; top:80px; left:90px;"> Tens&atilde;o Vmod 1</h5>
+							</div>
+
+							<div id="legenda_mod2">
+								<div id="mudacor_mod2" style = "position:absolute; top:120px; left:30px">
+									<input type='text' id="cor_mod2" onchange="muda_cor('#cor_mod2','out_cor_mod2');Draw()">
+									<output for="cor_mod2" id="out_cor_mod2" onchange="Draw()" style="display:none"></output>
+								</div>
+								<h5 id="texto_leg_mod2" style="font-size:0.9vw; position:absolute; top:120px; left:90px;"> Tens&atilde;o Vmod 2</h5>
+							</div>
+							
+							<div id="legenda_vcon1">
+								<div id="mudacor_vcon1" style = "position:absolute; top:40px; left:280px">
+									<input type='text' id="cor_vcon1" onchange="muda_cor('#cor_vcon1','out_cor_vcon1');Draw()">
+									<output for="cor_vcon1" id="out_cor_vcon1" onchange="Draw()" style="display:none"></output>
+								</div>
+								<h5 id="texto_leg_con1" style="font-size:0.9vw; position:absolute; top:40px; left:340px;"> Tens&atilde;o Controlo 1</h5>
+							</div>
+
+							<div id="legenda_vcon2">
+								<div id="mudacor_vcon2" style = "position:absolute; top:80px; left:280px">
+									<input type='text' id="cor_vcon2" onchange="muda_cor('#cor_vcon2','out_cor_vcon2');Draw()">
+									<output for="cor_vcon2" id="out_cor_vcon2" onchange="Draw()" style="display:none"></output>
+								</div>
+								<h5 id="texto_leg_con2" style="font-size:0.9vw; position:absolute; top:80px; left:340px;"> Tens&atilde;o Controlo 2</h5>
+							</div>
+							
+
+							<div id="legenda_vo">
+								<div id="mudacor_vo" style = "position:absolute; top:40px; left:530px">
+									<input type='text' id="cor_vo" onchange="muda_cor('#cor_vo','out_cor_vo');Draw()">
+									<output for="cor_vo" id="out_cor_vo" onchange="Draw()" style="display:none"></output>
+								</div>
+								<h5 id="texto_leg_vo" style="font-size:0.9vw; position:absolute; top:40px; left:590px;"> Tens&atilde;o de Saída</h5>
+							</div>
+
+							<div id="legenda_io">
+								<div id="mudacor_io" style = "position:absolute; top:40px; left:740px">
+									<input type='text' id="cor_io" onchange="muda_cor('#cor_io','out_cor_io');Draw()">
+									<output for="cor_io" id="out_cor_io" onchange="Draw()" style="display:none"></output>
+								</div>
+								<h5 id="texto_leg_io" style="font-size:0.9vw; position:absolute; top:40px; left:800px;"> Corrente de Saída</h5>
+							</div>
+						
+							</div>
+
+
+						<!--data-dismiss="modal"-->
+						
+						<div class="modal-footer" style="height:7vh; background-color:white; border-top-style:dotted; border-top-color:black; border-width:2;" >
+							<button type="button" class="btn btn-default" onclick="cores();Draw()" style="position:relative; top: -0.8vh; font-size: 0.85vw; background-color: green; border-style:solid; border-color:black; border-width:2; color: white; font-family: Impact, Charcoal, sans-serif;letter-spacing: 0.5px;">Alterar</button>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+
+			<div class="modal fade" id="myModal3" role="dialog">
+				<div class="modal-dialog">
+    
+					<!-- Conteúdo-->
+					<div class="modal-content" style="height:25vh;width:40vw;">
+					
+						<div class="modal-header" style="background-color:silver; border-bottom-style:dotted; border-bottom-color:black; border-width:2;">
+							<button type="button" class="close" style=" background-color:silver; color: black; opacity: 1; width:20;border-style:dotted; border-color:black; border-width:1.3;" data-dismiss="modal">&times;</button>
+							<h4 align="center" class="modal-title" style="font-size:1vw;color:Black; font-family: Impact, Charcoal, sans-serif;letter-spacing: 0.5px;" ><u>Simulador de Estrátegias de Controlo</u></h4>
+						</div>
+						
+						<div class="modal-body" id="Body_Cores" style="height:20vh;background-color:#FFFFFF;">
+								<h5 style="font-size:0.6vw;display:inline;">Projeto Desenvolvido por:</h5>
+								<h5 style="font-size:0.8vw;display:inline;"><b>André Makrilou</b></h5>
+								<h5 style="font-size:0.6vw; display:inline;position:relative;left:5.5vw">Orientação:</h5>
+								<h5 style="font-size:0.8vw; display:inline;position:relative;left:5.5vw"><b>Engenheiro Rui Chibante</b></h5>
+								<!-- <h5 style="font-size:0.6vw; position:relative; top:75%; left:45%;">versão 2.0</h5> -->
+
+								<img src="../Imagens/ISEP.jpg" alt="ISEP" id="ISEP" style="position:relative; top:5vh;  height:10vh; width:12.5vw;  border-width: 1px; border-style: dotted; border-color: white" >
+								<img src="../Imagens/DEE_Logo.jpg" alt="ISEP" id="ISEP" style="position:relative; top:5vh; left:12vw; height:10vh; width:12.5vw;  border-width: 1px; border-style: dotted; border-color: white" >
+						</div>
+					</div>
+				</div>
+
+		</div>
+
+
+		<!--My Modal 4-->
+										<!-- Modal 4-->
+			<div class="modal fade" id="myModal5" role="dialog">
+				<div class="modal-dialog">
+    
+					<!-- Conteúdo-->
+					<div class="modal-content" style="height:20vh;width:40vw;">
+				
+						<div class="modal-header" style="background-color:silver; border-bottom-style:dotted; border-bottom-color:black; border-width:2;">
+							<button type="button" class="close" style=" background-color:silver; color: black; opacity: 1; width:20;border-style:dotted; border-color:black; border-width:1.3;" data-dismiss="modal">&times;</button>
+							<h4 align="center" class="modal-title" style="color:black; font-size:1vw; font-family: Impact, Charcoal, sans-serif;letter-spacing: 0.5px;" ><u>Configuração Paínel de Controlo</u></h4>
+						</div>
+						
+						<div class="modal-body" style="font-size:0.75vw; line-height: 1.5vw; background-color:#FFFFFF;">
+						
+							<b>Selecione a Variável do Painel de Controlo que Pretende Reajustar: </b>
+							<br>
+							<input type="radio" id="alt_vpicop" name="alterar_val" value="Vin">&nbsp;Valor da Tensão de Pico da Onda Portadora<br>
+							<input type="radio" id="alt_freq" name="alterar_val" value="Freqp">&nbsp;Valor da Frequência da Onda Portadora<br>
+							<input type="radio" id="alt_vin" name="alterar_val" value="L">&nbsp;Valor da Tensão de Entrada<br>
+							<input type="radio" id="alt_r" name="alterar_val" value="E">&nbsp;Resistência Carga<br>
+							<input type="radio" id="alt_l" name="alterar_val" value="E">&nbsp;Indutância<br>
+							<b style="font-size:0.8vw;">Introduza o Mínimo:</b>
+							<input type="text" id="Min_Val" onkeypress="return isNumber(event)" style="width:3.5vw;">
+							<b style="font-size:0.8vw;">&nbsp;Introduza o Máximo:</b>
+							<input type="text" id="Max_Val" onkeypress="return isNumber(event)" style="width:3.5vw;">
+
+						</div>
+						
+						<div class="modal-footer" style="height:6.5vh; background-color:#FFFFFF; border-top-style:dotted; border-top-color:black; border-width:2;" >
+							<button type="button" class="btn btn-default" onclick="Altera_Var();Draw()" style="font-size: 0.85vw; background-color: green; border-style:solid; border-color:black; border-width:2; color: white; font-family: Impact, Charcoal, sans-serif;letter-spacing: 0.5px;">Alterar</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!--My Modal 5-->
+
+			<div class="modal fade" id="myModal6" role="dialog">
+				<div class="modal-dialog" style="width:45vw;">
+    
+					<!-- Conteúdo-->
+					<div class="modal-content" style="height:25vh;">
+					
+						<div class="modal-header" style="background-color:silver; border-bottom-style:dotted; border-bottom-color:black; border-width:2;">
+							<button type="button" class="close" style=" background-color:silver; color: black; opacity: 1; width:20;border-style:dotted; border-color:black; border-width:1.3;" data-dismiss="modal">&times;</button>
+							<h4 align="center" class="modal-title" style="font-size:1vw;color:Black; font-family: Impact, Charcoal, sans-serif;letter-spacing: 0.5px;" ><u>Simulador de Estrátegias de Controlo</u></h4>
+						</div>
+						
+						<div class="modal-body" id="Body_Cores" style="height:65vh;background-color:#FFFFFF;">
+
+								<img src="../Imagens/svm_completo.png" style="position:relative;  height:60vh; width:42.5vw;  border-width: 1px; border-style: dotted; border-color: white" >
+						</div>
+					</div>
+				</div>
+			
+			
+								
+			</div>
+
+		
+		<script>
+		
+			var cor;
+			$("#cor_u").spectrum({
+			color: "#000000"
+			});
+			
+			$("#cor_w").spectrum({
+			color: "#FFFF00"
+			});
+			
+			$("#cor_v").spectrum({
+			color: "#FF3333"
+			});
+			
+			
+			$("#cor_vpor1").spectrum({
+			color: "#7CFC00"
+			});
+			
+			$("#cor_mod1").spectrum({
+			color: "#ff6600"
+			});
+	
+			$("#cor_mod2").spectrum({
+			color: "#FF0000"
+			});
+
+			$("#cor_vcon1").spectrum({
+			color: "#A0522D"
+			});
+
+			$("#cor_vcon2").spectrum({
+			color: "#4682B4"
+			});
+			
+			$("#cor_vo").spectrum({
+			color: "#FF0000"
+			});
+
+			$("#cor_io").spectrum({
+			color: "green"
+			});
+
+		
+			
+			function muda_cor(x,y)
+			{
+				var t = $(x).spectrum("get");
+				cor = t.toHexString();
+				document.getElementById(y).value = cor;
+				var z = document.getElementById(y).value;
+			}
+			
+		   function isNumber(evt)
+			{
+				var charCode = (evt.which) ? evt.which : evt.keyCode;
+				if (charCode != 46  && charCode != 45 && charCode > 31 
+				&& (charCode < 48 || (charCode > 57 )) )
+				return false;
+
+				return true;
+			}
+			
+		</script>
+	</body>
+</html>

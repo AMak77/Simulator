@@ -1,0 +1,91 @@
+@charset "URF-8";
+
+article, aside, footer, header, main, nav, section {�
+	display: block;
+}
+
+html, body, h1, h2, h3, ul, li, p, 
+article, aside, footer, header, main, nav, section {
+	padding= 0;
+	margin:0;
+}
+.intro  {
+	background-color: #2E2E2E;
+	color: white;
+	padding: 10px 10px;
+	margin-left: 15.5252vw;
+	margin-right: 15.5252vw;
+	height:14.5vh;
+	width:70vw;
+	border-radius:10px;
+}
+
+.Rodape  {
+	position:absolute;
+	top:82vh;
+	margin-left:15vw;
+	background-color: rgba(105, 35, 35, 0.555);
+	border-style:solid;
+	border-color:black;
+	color: white;
+	padding: 20px 10px;
+	margin-right: 2.5252vw;
+	height:4vh;
+	width:70vw;
+	font-size:1.1vw;
+}
+
+body{
+margin-left: auto;
+margin-right: auto;
+background-color: #E6E6E6;
+
+}
+
+
+ #Titulo
+ {
+
+	font-family: Arial Narrow, sans-serif;;
+	font-size:0.9vw;
+	letter-spacing: 0.5px;
+	background-color: #282828;
+	width: 18.5vw;
+	height: 6vh;
+
+ }
+
+
+.button {
+  font-family: Arial Narrow, sans-serif;
+  background-color: white; /* Green */
+  border: none;
+  border-radius: 10px;
+  color: black;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+.modal {
+  text-align: center;
+}
+
+@media screen and (min-width: 768px) { 
+  .modal:before {
+    display: inline-block;
+    vertical-align: middle;
+    content: " ";
+    height: 100%;
+  }
+}
+
+.modal-dialog {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
+}
